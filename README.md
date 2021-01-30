@@ -35,3 +35,47 @@ Your Pages site will use the layout and styles from the Jekyll theme you have se
 ### Support or Contact
 
 Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+
+```dart
+class BlocApp extends StatelessWidget {
+  final TodosInteractor todosInteractor;
+  final UserRepository userRepository;
+
+  const BlocApp({
+    Key key,
+    @required this.todosInteractor,
+    @required this.userRepository,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Injector(
+      todosInteractor: todosInteractor,
+      userRepository: userRepository,
+      child: TodosBlocProvider(
+        bloc: TodosListBloc(todosInteractor),
+        child: MaterialApp(
+          onGenerateTitle: (context) => BlocLocalizations.of(context).appTitle,
+          theme: ArchSampleTheme.theme,
+          localizationsDelegates: [
+            ArchSampleLocalizationsDelegate(),
+            InheritedWidgetLocalizationsDelegate(),
+          ],
+          routes: {
+            ArchSampleRoutes.home: (context) {
+              return HomeScreen(
+                repository: Injector.of(context).userRepository,
+              );
+            },
+            ArchSampleRoutes.addTodo: (context) {
+              return AddEditScreen(
+                addTodo: TodosBlocProvider.of(context).addTodo.add,
+              );
+            },
+          },
+        ),
+      ),
+    );
+  }
+}
+```
